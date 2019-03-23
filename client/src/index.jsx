@@ -16,7 +16,10 @@ class App extends React.Component {
   componentDidMount() {
     $.ajax({
       url: `/repos`,
-      method: 'GET',
+      type: 'GET',
+      data:JSON.stringify({username:term}),
+      dataType : "text",
+      contentType: "application/json",
       success: function(term) {
         this.setState({
           repos: term
@@ -30,10 +33,14 @@ class App extends React.Component {
 
   search (term) {
     console.log(`${term} was searched`);
+    console.log('is dev server even on')
     $.ajax({
       url: `/repos`,
-      method:'POST',
-      data:term
+      type:'POST',
+      data:JSON.stringify({username:term}),
+      dataType : "text",
+      contentType: "application/json",
+      success: console.log('Got the term: ', term)
     })
   }
 

@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/fetcher', function (err) {
-  if (err) throw err;
-  console.log('Successfully connected');
+mongoose.connect('mongodb://localhost/fetcher')
+
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function () {
+  console.log('we are connected!');
 });
 
 let repoSchema = mongoose.Schema({
@@ -17,11 +20,27 @@ let repoSchema = mongoose.Schema({
 let Repo = mongoose.model('Repo', repoSchema);
 
 let save = (repo, callback) => {
-  // TODO: Your code here
+  // Your code here
   // This function should save a repo or repos to
   // the MongoDB
-  Repo.save();
+  for (let i = 0; i < repo.length; i++) {
+    newRepo = new Repo ({
+      id: repo[i].id,
+      name: repo[i].name,
+      fullname: repo[i].full_name,
+      watchers: repo[i].watchers,
+      forks: repo[i].forks,
+      stargazers_count: repo[i].stargazers_count,
+      html_url: repo[i].html_url
+    });
+    newRepo.save(callback);
+    console.log('response', repo[i].name);
+  }
 }
 
-// module.exports = Repo;
+let find = (callback) => {
+  Repo.find({}).sort('-forks').limit(25).exec(callback)
+}
+
 module.exports.save = save;
+module.exports.find = find;

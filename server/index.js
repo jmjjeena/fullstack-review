@@ -1,38 +1,45 @@
 const express = require('express');
 let app = express();
 let bodyParser = require('body-parser');
-let save = require('../database/index').save;
-const getReposByUsername = require('../helpers/github.js').getReposByUsername;
+let db = require('../database/index');
+let repos = require('../helpers/github.js')
 
-
-app.use(bodyParser.urlencoded({extended : false}));
+app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
+
 app.use(express.static(__dirname + '/../client/dist'));
+
 
 app.post('/repos', function (req, res) {
   // TODO - your code here!
   // This route should take the github username provided
   // and get the repo information from the github API, then
   // save the repo information in the database
-  var username = req.body.term;
-  getReposByUsername(username, function(err, repos) {
-    if(err) {
-      console.log(err);
-      res.sendStatus(400)
-    } else {
-      save(repos, () => {
-        res.sendStatus(201);
-      })
-    }
+  console.log('body: ', req.body);
+  const username = req.body.username;
+
+  console.log(username);
+
+  repos.getReposByUsername(username, (results) => {
+    // console.log('repo:', repo);
+    db.save(results, (err, result) => {
+      res.status(201);
+    })
   })
-  res.send('POST request to the GithubAPI');
 });
 
 
 app.get('/repos',(req, res) => {
   // TODO - your code here!
   // This route should send back the top 25 repos
- res.sendStatus(201);
+  db.find((err, result) => {
+    if(err) {
+      console.log('err: ', err);
+      res.statusCode(401)
+    } else {
+      res.send(result);
+    }
+  });
 });
 
 
