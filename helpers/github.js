@@ -8,19 +8,14 @@ let getReposByUsername = (/* TODO */) => {
   // The options object has been provided to help you out, 
   // but you'll have to fill in the URL
   let options = {
-    url: 'https://api.github.com/users/octocat',
+    url: 'https://api.github.com/users/' + username + '/repos',
     headers: {
       'User-Agent': 'request',
       'Authorization': `token ${config.TOKEN}`
     }
   };
 
-  function callback(error, response) {
-    if (!error && response.statusCode == 200) {
-      console.log('Oops! Error');
-    }
-  }
-  request(options, callback);
+  return options
 }
 
 module.exports.getReposByUsername = getReposByUsername;
