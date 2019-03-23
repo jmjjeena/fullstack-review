@@ -23,7 +23,4 @@ let getReposByUsername = (/* TODO */) => {
   request(options, callback);
 }
 
-
-
-
 module.exports.getReposByUsername = getReposByUsername;
